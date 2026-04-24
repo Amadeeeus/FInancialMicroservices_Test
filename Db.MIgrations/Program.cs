@@ -1,13 +1,15 @@
 using Db.Migrations.Api;
+using Microsoft.EntityFrameworkCore;
+using User.UserService.Infrastructure.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddLogging();
 
 builder.Services.AddDbContext<UserDbContext>(options 
-    => options.UseNpgSql(builder.Configuration.GetConnectionString("UserDb")));
+    => options.UseNpgsql(builder.Configuration.GetConnectionString("UserDb")));
 
 builder.Services.AddDbContext<UserDbContext>(options 
-    => options.UseNpgSql(builder.Configuration.GetConnectionString("FinancionalDb")));
+    => options.UseNpgsql(builder.Configuration.GetConnectionString("FinancionalDb")));
 
 builder.Services.AddHostedService<MigrationHostedService>();
 

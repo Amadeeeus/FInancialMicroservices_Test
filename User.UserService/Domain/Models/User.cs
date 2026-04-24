@@ -3,25 +3,37 @@
 /// <summary>
 /// Сущность пользователя
 /// </summary>
-public class User
+public sealed class User
 {
     /// <summary>
     /// Id пользователя
     /// </summary>
-    public required Guid Id { get; init; }
-    
+    public Guid Id { get; private set; }
+
     /// <summary>
     /// Имя пользователя
     /// </summary>
-    public required string Name { get; init; }
-    
+    public string Name { get; private set; } = null!;
+
     /// <summary>
     /// Пароль
     /// </summary>
-    public required string Password { get; init; }
+    public string Password { get; private set; } = null!;
     
     /// <summary>
     /// Интересные пользователю курсы
     /// </summary>
-    public string? Favourites { get; init; }
+    public string? Favourites { get; private set; }
+
+    private User()
+    {
+    }
+
+    public User(Guid id, string name, string password, string favourites)
+    {
+        Id = id;
+        Name = name;
+        Password = password;
+        Favourites = favourites;
+    }
 }

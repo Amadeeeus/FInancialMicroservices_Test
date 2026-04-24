@@ -1,4 +1,8 @@
-﻿namespace Db.Migrations.Api;
+﻿using Background.CurrencyRate.Infrastructure.Persistence;
+using Microsoft.EntityFrameworkCore;
+using User.UserService.Infrastructure.Persistence;
+
+namespace Db.Migrations.Api;
 
 /// <summary>
 /// Hosted service для миграций

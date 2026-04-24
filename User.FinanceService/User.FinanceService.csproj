@@ -8,9 +8,11 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="MediatR" Version="14.1.0" />
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.24"/>
-        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.23" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.11" />
         <PackageReference Include="Npgsql" Version="8.0.9" />
+        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.11" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2"/>
     </ItemGroup>
 
@@ -21,10 +23,10 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Api\" />
       <Folder Include="Application\" />
-      <Folder Include="Domain\Models\" />
-      <Folder Include="Infrastructure\Persistence\" />
+      <Folder Include="Infrastructure\Persistence\Configurations\" />
+      <Folder Include="Infrastructure\Persistence\Repositories\" />
+      <Folder Include="Shared\" />
     </ItemGroup>
 
 </Project>
