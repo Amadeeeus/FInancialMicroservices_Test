@@ -1,6 +1,6 @@
 ﻿namespace User.UserService.Api.Dtos;
 
-public class CreateUserDto
+public class CreateFinancialDto
 {
     
 }

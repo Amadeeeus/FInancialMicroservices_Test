@@ -36,4 +36,11 @@ public sealed class User
         Password = password;
         Favourites = favourites;
     }
+    
+    public void Update(string name, string password, string favourites)
+    {
+        Name = name;
+        Password = password;
+        Favourites = favourites;
+    }
 }
