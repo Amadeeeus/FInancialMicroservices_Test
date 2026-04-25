@@ -13,7 +13,8 @@ public class UpdateUserHandler(UserDbContext context, ILogger<CreateUserHandler>
     public async Task Handle(UpdateUserCommand request, CancellationToken ct)
     {
 
-        var user = await context.Users.FirstOrDefaultAsync(x => x.Id == request.Id, ct) 
+        var user = await context.Users
+                       .FirstOrDefaultAsync(x => x.Id == request.Id, ct) 
                    ?? throw new Exception("User not found");
 
         

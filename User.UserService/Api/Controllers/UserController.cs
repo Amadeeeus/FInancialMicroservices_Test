@@ -1,5 +1,7 @@
-﻿using MediatR;
+﻿using AutoMapper;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using User.UserService.Application.Commands;
 using User.UserService.Application.Dtos;
 
 namespace User.UserService.Api.Controllers;
@@ -11,7 +13,7 @@ namespace User.UserService.Api.Controllers;
 /// <param name="logger">Стандартная библиотека логирования</param>
 [ApiController]
 [Route("api/user")]
-public class UserController(IMediator mediator, ILogger<UserController> logger) : ControllerBase
+public class UserController(IMediator mediator, ILogger<UserController> logger, IMapper mapper) : ControllerBase
 {
     /// <summary>
     /// Получение пользователя по ID
@@ -55,10 +57,20 @@ public class UserController(IMediator mediator, ILogger<UserController> logger) 
     /// <param name="user">Входная сущность пользователя</param>
     /// <returns></returns>
     [HttpPost("auth")]
-    public async Task<IActionResult> AuthentificationUserAsync([FromQuery] CreateUserDto user)
+    public async Task<IActionResult> AuthentificationUserAsync([FromQuery] AuthentificationUserDto user)
     {
-        var result = await mediator.Send(user);
-        return Ok(result);
+        var map = mapper.Map<AuthentificationUserDto, AuthentificationUserCommand>(user);
+        var tokens = await mediator.Send(map);
+
+        Response.Cookies.Append("Refresh", tokens?.RefreshToken!, new CookieOptions
+        {
+            HttpOnly = true,
+            Secure = true,
+            SameSite = SameSiteMode.Strict,
+            Expires =  DateTimeOffset.UtcNow.AddDays(7)
+        });
+
+        return Ok(new { tokens?.AccessToken});
     }
     
     /// <summary>
