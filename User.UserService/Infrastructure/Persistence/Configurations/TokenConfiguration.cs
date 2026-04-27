@@ -7,9 +7,9 @@ namespace User.UserService.Infrastructure.Persistence.Configurations;
 /// <summary>
 /// Конфигурация контекста токена
 /// </summary>
-public class TokenConfiguration : IEntityTypeConfiguration<Token>
+public class TokenConfiguration : IEntityTypeConfiguration<TokenEntity>
 {
-    public void Configure(EntityTypeBuilder<Token> builder)
+    public void Configure(EntityTypeBuilder<TokenEntity> builder)
     {
         builder.ToTable("Tokens");
         
@@ -23,5 +23,14 @@ public class TokenConfiguration : IEntityTypeConfiguration<Token>
                 DateTime
                     .UtcNow
                     .AddDays(7));
+
+        builder.Property(x => x.Expires)
+            .HasDefaultValue(
+                DateTime
+                    .UtcNow
+                );
+        
+        builder.Property(x => x.IsRevoked)
+            .HasDefaultValue(false);
     }
 }

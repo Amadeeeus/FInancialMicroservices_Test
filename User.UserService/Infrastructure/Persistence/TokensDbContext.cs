@@ -9,7 +9,7 @@ namespace User.UserService.Infrastructure.Persistence;
 /// <param name="options"></param>
 public class TokensDbContext(DbContextOptions<TokensDbContext> options) : DbContext(options)
 {
-    public DbSet<Token> Tokens {get; set; }
+    public DbSet<TokenEntity> Tokens {get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

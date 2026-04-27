@@ -6,4 +6,4 @@ namespace User.UserService.Application.Queries;
 /// <summary>
 /// Запрос пользователя из БД
 /// </summary>
-public record GetUserByIdQuery(Guid UserId) : IRequest<Domain.Models.User>, IRequest<UserDto>;
+public record GetUserByIdQuery(Guid UserId) : IRequest<Domain.Models.UserEntity>, IRequest<UserDto>;

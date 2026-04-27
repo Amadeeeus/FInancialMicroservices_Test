@@ -1,7 +1,9 @@
-﻿namespace User.UserService.Infrastructure.Jwt.Interfaces;
+﻿using User.UserService.Domain.Models;
+
+namespace User.UserService.Infrastructure.Jwt.Interfaces;
 
 public interface IJwtTokenGenerator
 {
-    string GenerateAccessToken(User.UserService.Domain.Models.User user);
+    string GenerateAccessToken(UserEntity? userEntity);
     string GenerateRefreshToken();
 }

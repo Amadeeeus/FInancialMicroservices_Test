@@ -3,7 +3,7 @@
 /// <summary>
 /// Сущность пользователя
 /// </summary>
-public sealed class User
+public sealed class UserEntity
 {
     /// <summary>
     /// Id пользователя
@@ -25,11 +25,11 @@ public sealed class User
     /// </summary>
     public string? Favourites { get; private set; }
 
-    private User()
+    private UserEntity()
     {
     }
 
-    public User(Guid id, string name, string password, string favourites)
+    public UserEntity(Guid id, string name, string password, string favourites)
     {
         Id = id;
         Name = name;

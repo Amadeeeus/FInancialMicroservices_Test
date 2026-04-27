@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using User.UserService.Application.Commands;
 using User.UserService.Application.Dtos;
+using User.UserService.Application.Extensions;
 using User.UserService.Domain.Models;
 using User.UserService.Infrastructure.Jwt.Interfaces;
 using User.UserService.Infrastructure.Persistence;
@@ -9,7 +10,7 @@ using User.UserService.Infrastructure.Persistence;
 namespace User.UserService.Application.Handlers;
 
 /// <summary>
-/// Хендлер 
+/// Хендлер авторизации
 /// </summary>
 /// <param name="context"></param>
 /// <param name="logger"></param>
@@ -34,13 +35,15 @@ public class AuthentificationUserHandler(UserDbContext context,TokensDbContext t
         
         // генерация jwt токенов
         var access = generator.GenerateAccessToken(user);
-        var refresh  = generator.GenerateRefreshToken();
+        var refresh = generator
+            .GenerateRefreshToken();
 
         // добавление refresh в БД
-        await tokensContext.Tokens.AddAsync(new Token
+        await tokensContext.Tokens.AddAsync(new TokenEntity
         {
-            Id = user.Id,
-            RefreshToken =  refresh
+            Id = new Guid(),
+            UserId = user.Id,
+            RefreshToken =  refresh.HashRefreshToken() //хеширование через экстеншн перед сохранением в базу;
         }, cancellationToken);
         
         await tokensContext.SaveChangesAsync(cancellationToken);

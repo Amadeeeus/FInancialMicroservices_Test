@@ -12,7 +12,7 @@ public class CreateUserHandler(UserDbContext context, ILogger<CreateUserHandler>
     public async Task Handle(CreateUserCommand request, CancellationToken ct)
     {
         var crypted = BCrypt.Net.BCrypt.HashPassword(request.Password);
-        var user = new Domain.Models.User(
+        var user = new Domain.Models.UserEntity(
             new Guid(),
             request.Name, 
             crypted,

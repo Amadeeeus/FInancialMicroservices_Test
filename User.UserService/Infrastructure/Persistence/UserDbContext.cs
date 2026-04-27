@@ -8,7 +8,7 @@ namespace User.UserService.Infrastructure.Persistence;
 /// <param name="options">Реализация базового конструктора</param>
 public class UserDbContext(DbContextOptions<UserDbContext> options) : DbContext(options)
 {
-    public DbSet<Domain.Models.User>  Users { get; init; }
+    public DbSet<Domain.Models.UserEntity>  Users { get; init; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

@@ -19,7 +19,7 @@ public class JwtTokenGenerator(IOptions<JwtTokenOptions> options) : IJwtTokenGen
     private readonly JwtTokenOptions _options = options.Value;
     private readonly JwtSecurityTokenHandler _tokenHandler = new ();
 
-    public string GenerateAccessToken(User.UserService.Domain.Models.User user)
+    public string GenerateAccessToken(User.UserService.Domain.Models.UserEntity userEntity)
     {
         var key = new SymmetricSecurityKey(
             Encoding.UTF8.GetBytes(_options.Secret));
@@ -30,10 +30,10 @@ public class JwtTokenGenerator(IOptions<JwtTokenOptions> options) : IJwtTokenGen
 
         var claims = new List<Claim>
         {
-            new(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
-            new(JwtRegisteredClaimNames.Name, user.Name),
+            new(JwtRegisteredClaimNames.Sub, userEntity.Id.ToString()),
+            new(JwtRegisteredClaimNames.Name, userEntity.Name),
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-            new(ClaimTypes.NameIdentifier, user.Id.ToString())
+            new(ClaimTypes.NameIdentifier, userEntity.Id.ToString())
         };
 
         var tokenDescriptor = new SecurityTokenDescriptor

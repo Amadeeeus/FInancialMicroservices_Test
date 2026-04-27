@@ -6,9 +6,9 @@ namespace User.UserService.Infrastructure.Persistence.Configurations;
 /// <summary>
 /// Конфигурация для EF таблица Users
 /// </summary>
-public sealed class UserConfiguration : IEntityTypeConfiguration<Domain.Models.User>
+public sealed class UserConfiguration : IEntityTypeConfiguration<Domain.Models.UserEntity>
 {
-    public void Configure(EntityTypeBuilder<Domain.Models.User> builder)
+    public void Configure(EntityTypeBuilder<Domain.Models.UserEntity> builder)
     {
         builder.ToTable("Users");
         
