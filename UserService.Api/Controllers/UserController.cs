@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using User.UserService.Application.Commands;
 using User.UserService.Application.Dtos;
@@ -23,6 +24,7 @@ public class UserController(IMediator mediator, ILogger<UserController> logger, 
     /// <param name="id">id пользователя</param>
     /// <param name="ct">Cancellation Token</param>
     /// <returns></returns>
+    [Authorize]
     [HttpGet("{id}")]
     public async Task<IActionResult> GetUserByAsync([FromRoute] GetUserByIdDto id, CancellationToken ct)
     { 
@@ -51,6 +53,7 @@ public class UserController(IMediator mediator, ILogger<UserController> logger, 
     /// <param name="user">Входная сущность пользователя</param>
     /// <param name="ct"></param>
     /// <returns></returns>
+    [Authorize]
     [HttpPost("update")]
     public async Task<IActionResult> UpdateUserAsync([FromQuery] CreateUserDto user, CancellationToken ct)
     {
@@ -87,6 +90,7 @@ public class UserController(IMediator mediator, ILogger<UserController> logger, 
     /// Выход пользователя
     /// </summary>
     /// <returns></returns>
+    [Authorize]
     [HttpPost("logout")]
     public async Task<IActionResult> LogoutUserAsync(CancellationToken ct)
     {
@@ -113,6 +117,7 @@ public class UserController(IMediator mediator, ILogger<UserController> logger, 
     /// </summary>
     /// <param name="ct"></param>
     /// <returns></returns>
+    [Authorize]
     [HttpPost("refresh")]
     public async Task<IActionResult> RefreshUserAsync(CancellationToken ct)
     {

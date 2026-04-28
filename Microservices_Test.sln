@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BackgroundRateService.Api", "BackgroundRateService.Api\BackgroundRateService.Api.csproj", "{A46F1FA8-98D3-493F-A6AB-59E073C76DEC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BackgroundRateService.Background", "BackgroundRateService.Background\BackgroundRateService.Background.csproj", "{A46F1FA8-98D3-493F-A6AB-59E073C76DEC}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MigrationService.Api", "MigrationService.Api\MigrationService.Api.csproj", "{CE54C8E4-DA76-49DD-A44D-441CC7B94C4F}"
 EndProject

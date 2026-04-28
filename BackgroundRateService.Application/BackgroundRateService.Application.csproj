@@ -6,4 +6,12 @@
         <ImplicitUsings>enable</ImplicitUsings>
     </PropertyGroup>
 
+    <ItemGroup>
+      <PackageReference Include="MediatR" Version="14.1.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\BackgroundRateService.Infrastructure\BackgroundRateService.Infrastructure.csproj" />
+    </ItemGroup>
+
 </Project>

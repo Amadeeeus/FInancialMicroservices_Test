@@ -1,8 +1,8 @@
-﻿using Background.CurrencyRate.Infrastructure.Persistence;
+﻿using BackgroundRateService.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using UserService.Infrastructure.Persistence;
 
-namespace Db.Migrations.Api;
+namespace Db.Migrations;
 
 /// <summary>
 /// Hosted service для миграций
@@ -12,7 +12,7 @@ namespace Db.Migrations.Api;
 /// <param name="lifetime">Управление жизненным циклом сервиса</param>
 public class MigrationHostedService(IServiceProvider serviceProvider, ILogger<MigrationHostedService> logger, IHostApplicationLifetime lifetime) : IHostedService
 {
-    public async Task StartAsync(CancellationToken token)
+    public async Task StartAsync(CancellationToken ct)
     {
         try
         {
@@ -21,13 +21,17 @@ public class MigrationHostedService(IServiceProvider serviceProvider, ILogger<Mi
             using var scope = serviceProvider.CreateScope();
 
             var userDb = scope.ServiceProvider.GetRequiredService<UserDbContext>();
-            var financialDb = scope.ServiceProvider.GetRequiredService<FinancialDbContext>();
+            var tokenDb =  scope.ServiceProvider.GetRequiredService<TokensDbContext>();
+            var financialDb = scope.ServiceProvider.GetRequiredService<CurrencyDbContext>();
 
             logger.LogInformation("Применение миграции UserDb");
-            await userDb.Database.MigrateAsync(token);
+            await userDb.Database.MigrateAsync(ct);
 
+            logger.LogInformation("Применение миграции TokenDb");
+            await tokenDb.Database.MigrateAsync(ct);
+            
             logger.LogInformation("Применение миграции FinancialDb");
-            await financialDb.Database.MigrateAsync(token);
+            await financialDb.Database.MigrateAsync(ct);
 
             logger.LogInformation("Миграция успешно завершена");
         }

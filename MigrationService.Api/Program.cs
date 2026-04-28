@@ -1,4 +1,4 @@
-using Db.Migrations.Api;
+using Db.Migrations;
 using Microsoft.EntityFrameworkCore;
 using UserService.Infrastructure.Persistence;
 

@@ -1,5 +1,3 @@
-
-
 using UserService.Infrastructure;
 using UserServiceApplication;
 
