@@ -1,9 +1,10 @@
 ﻿using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using UserService.Infrastructure.Persistence;
 using UserService.Infrastructure.Persistence.Jwt.Implementations;
 using UserService.Infrastructure.Persistence.Jwt.Options;
-using UserService.Infrastructure.Persistence.Persistence;
 
 namespace UserService.Api.Extensions;
 

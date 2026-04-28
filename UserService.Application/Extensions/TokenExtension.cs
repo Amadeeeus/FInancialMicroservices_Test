@@ -1,8 +1,8 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
-using User.UserService.Domain.Models;
-using UserService.Infrastructure.Persistence.Persistence;
+using UserService.Domain.Entities;
+using UserService.Infrastructure.Persistence;
 
 namespace UserServiceApplication.Extensions;
 

@@ -1,15 +1,15 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using User.UserService.Domain.Models;
+using UserService.Domain.Entities;
 
-namespace UserService.Infrastructure.Persistence.Persistence.Configurations;
+namespace UserService.Infrastructure.Persistence.Configurations;
 
 /// <summary>
 /// Конфигурация для EF таблица Users
 /// </summary>
-public sealed class UserConfiguration : IEntityTypeConfiguration<UserEntity>
+public class UserConfiguration : IEntityTypeConfiguration<UserEntity>
 {
-    public void Configure(EntityTypeBuilder<User.UserService.Domain.Models.UserEntity> builder)
+    public void Configure(EntityTypeBuilder<UserEntity> builder)
     {
         builder.ToTable("Users");
         

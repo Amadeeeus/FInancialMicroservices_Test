@@ -1,4 +1,4 @@
-﻿namespace User.UserService.Domain.Models;
+﻿namespace UserService.Domain.Entities;
 
 /// <summary>
 /// Сущность пользователя

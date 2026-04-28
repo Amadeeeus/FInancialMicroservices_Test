@@ -1,6 +1,6 @@
 using Db.Migrations.Api;
 using Microsoft.EntityFrameworkCore;
-using UserService.Infrastructure.Persistence.Persistence;
+using UserService.Infrastructure.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddLogging();

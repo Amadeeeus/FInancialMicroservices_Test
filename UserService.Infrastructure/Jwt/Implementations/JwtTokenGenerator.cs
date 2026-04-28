@@ -4,7 +4,7 @@ using System.Security.Cryptography;
 using System.Text;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using User.UserService.Domain.Models;
+using UserService.Domain.Entities;
 using IJwtTokenGenerator = UserService.Infrastructure.Persistence.Jwt.Interfaces.IJwtTokenGenerator;
 using JwtTokenOptions = UserService.Infrastructure.Persistence.Jwt.Options.JwtTokenOptions;
 

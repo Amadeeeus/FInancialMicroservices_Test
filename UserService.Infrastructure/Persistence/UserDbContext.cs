@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using UserService.Domain.Entities;
 
-namespace UserService.Infrastructure.Persistence.Persistence;
+namespace UserService.Infrastructure.Persistence;
 
 /// <summary>
 /// Контекст БД Users
@@ -8,7 +9,7 @@ namespace UserService.Infrastructure.Persistence.Persistence;
 /// <param name="options">Реализация базового конструктора</param>
 public class UserDbContext(DbContextOptions<UserDbContext> options) : DbContext(options)
 {
-    public DbSet<User.UserService.Domain.Models.UserEntity>  Users { get; init; }
+    public DbSet<UserEntity>  Users { get; init; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

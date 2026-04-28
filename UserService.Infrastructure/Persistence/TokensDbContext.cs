@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using User.UserService.Domain.Models;
+using UserService.Domain.Entities;
 
-namespace UserService.Infrastructure.Persistence.Persistence;
+namespace UserService.Infrastructure.Persistence;
 
 /// <summary>
 /// Контекст Бд для хранения токена

@@ -1,10 +1,12 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using User.UserService.Application.Commands;
 using User.UserService.Application.Dtos;
-using User.UserService.Domain.Models;
+using UserService.Domain.Entities;
+using UserService.Infrastructure.Persistence;
 using UserService.Infrastructure.Persistence.Jwt.Interfaces;
-using UserService.Infrastructure.Persistence.Persistence;
+using UserServiceApplication.Dtos;
 using UserServiceApplication.Extensions;
 
 namespace UserServiceApplication.Handlers;

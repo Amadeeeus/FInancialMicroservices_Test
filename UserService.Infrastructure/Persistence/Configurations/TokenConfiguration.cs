@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using User.UserService.Domain.Models;
+using UserService.Domain.Entities;
 
 namespace UserService.Infrastructure.Persistence.Configurations;
 
@@ -23,12 +23,6 @@ public class TokenConfiguration : IEntityTypeConfiguration<TokenEntity>
                 DateTime
                     .UtcNow
                     .AddDays(7));
-
-        builder.Property(x => x.Expires)
-            .HasDefaultValue(
-                DateTime
-                    .UtcNow
-                );
         
         builder.Property(x => x.IsRevoked)
             .HasDefaultValue(false);

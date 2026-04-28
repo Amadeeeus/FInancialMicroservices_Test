@@ -1,6 +1,6 @@
 ﻿using Background.CurrencyRate.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
-using UserService.Infrastructure.Persistence.Persistence;
+using UserService.Infrastructure.Persistence;
 
 namespace Db.Migrations.Api;
 

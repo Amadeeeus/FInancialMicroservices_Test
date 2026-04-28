@@ -1,4 +1,4 @@
-﻿using User.UserService.Domain.Models;
+﻿using UserService.Domain.Entities;
 
 namespace UserService.Infrastructure.Persistence.Jwt.Interfaces;
 
