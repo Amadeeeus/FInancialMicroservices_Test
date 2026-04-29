@@ -1,9 +1,12 @@
 ﻿namespace UserServiceApplication.Dtos;
 
 /// <summary>
-/// Выходной DTO пользователя
+/// Выходной контракт пользователя по Id
 /// </summary>
-public class UserDto(Guid id, string name, string password, string? favourites)
+/// <param name="id">Id пользователя</param>
+/// <param name="name">Имя</param>
+/// <param name="favourites">Любимые курсы</param>
+public class GetUserByIdOutDto(Guid id, string name, string? favourites)
 {
     /// <summary>
     /// Id пользователя 
@@ -14,11 +17,6 @@ public class UserDto(Guid id, string name, string password, string? favourites)
     /// Имя пользователя
     /// </summary>
     public string Name { get; init; } = name;
-
-    /// <summary>
-    /// Пароль
-    /// </summary>
-    public string Password { get; init; } = password;
 
     /// <summary>
     /// Интересные пользователю курсы

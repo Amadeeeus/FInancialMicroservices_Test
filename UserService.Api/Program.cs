@@ -8,7 +8,9 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddControllers();
 
-builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddHealthChecks()
+    .AddNpgSql(configuration.GetConnectionString("DefaultConnection")!);
+
 builder.Services.AddInfrastructure(configuration);
 builder.Services.AddApplication(configuration);
 
@@ -20,6 +22,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+app.UseAuthentication();
+app.UseAuthorization();
 
+app.MapControllers();
 app.Run();

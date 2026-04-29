@@ -1,7 +1,6 @@
 ﻿using BackgroundRateService.Application.Commands;
 using BackgroundRateService.Application.Interfaces;
-using BackgroundRateService.Domain.Entities;
-using BackgroundRateService.Infrastructure.Persistence;
+using FinanceService.Infrastructure.Persistence;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -26,7 +25,7 @@ public class UpdateRatesHandler(CurrencyDbContext context, IExchangeRateProvider
 
             if (existing is null)
             {
-                context.ExchangeRates.Add(new ExchangeRateEntity
+                context.ExchangeRates.Add(new Domain.Entities.ExchangeRateEntity
                 {
                     Name = name,
                     Rate = rate

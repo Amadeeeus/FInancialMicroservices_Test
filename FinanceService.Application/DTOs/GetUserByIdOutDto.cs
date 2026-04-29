@@ -1,9 +1,6 @@
-﻿namespace UserServiceApplication.Dtos;
+﻿namespace FinanceService.Application.DTOs;
 
-/// <summary>
-/// Выходной DTO пользователя
-/// </summary>
-public class UserDto(Guid id, string name, string password, string? favourites)
+public class GetUserByIdOutDto(Guid id, string name, string? favourites)
 {
     /// <summary>
     /// Id пользователя 
@@ -14,11 +11,6 @@ public class UserDto(Guid id, string name, string password, string? favourites)
     /// Имя пользователя
     /// </summary>
     public string Name { get; init; } = name;
-
-    /// <summary>
-    /// Пароль
-    /// </summary>
-    public string Password { get; init; } = password;
 
     /// <summary>
     /// Интересные пользователю курсы

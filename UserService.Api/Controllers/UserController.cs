@@ -2,10 +2,11 @@
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using User.UserService.Application.Commands;
 using User.UserService.Application.Dtos;
-using User.UserService.Application.Queries;
 using UserServiceApplication.Dtos;
+using UserServiceApplication.Queries;
 
 namespace UserService.Api.Controllers;
 
@@ -25,8 +26,9 @@ public class UserController(IMediator mediator, ILogger<UserController> logger, 
     /// <param name="ct">Cancellation Token</param>
     /// <returns></returns>
     [Authorize]
+    [EnableRateLimiting("DefaultPolicy")]
     [HttpGet("{id}")]
-    public async Task<IActionResult> GetUserByAsync([FromRoute] GetUserByIdDto id, CancellationToken ct)
+    public async Task<IActionResult> GetUserByIdAsync([FromRoute] GetUserByIdDto id, CancellationToken ct)
     { 
         var query = mapper.Map<GetUserByIdDto, GetUserByIdQuery>(id); 
         var result =  await mediator.Send(query, ct); 
@@ -54,6 +56,7 @@ public class UserController(IMediator mediator, ILogger<UserController> logger, 
     /// <param name="ct"></param>
     /// <returns></returns>
     [Authorize]
+    [EnableRateLimiting("DefaultPolicy")]
     [HttpPost("update")]
     public async Task<IActionResult> UpdateUserAsync([FromQuery] CreateUserDto user, CancellationToken ct)
     {
@@ -68,6 +71,7 @@ public class UserController(IMediator mediator, ILogger<UserController> logger, 
     /// <param name="user">Входная сущность пользователя</param>
     /// <param name="ct">Cancellation Token</param>
     /// <returns></returns>
+    [EnableRateLimiting("LoginPolicy")]
     [HttpPost("auth")]
     public async Task<IActionResult> AuthentificationUserAsync([FromQuery] AuthentificationUserDto user, CancellationToken ct)
     {

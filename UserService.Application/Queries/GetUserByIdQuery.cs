@@ -1,10 +1,10 @@
 ﻿using MediatR;
-using User.UserService.Application.Dtos;
 using UserService.Domain.Entities;
+using UserServiceApplication.Dtos;
 
-namespace User.UserService.Application.Queries;
+namespace UserServiceApplication.Queries;
 
 /// <summary>
 /// Запрос пользователя из БД
 /// </summary>
-public record GetUserByIdQuery(Guid UserId) : IRequest<UserEntity>, IRequest<UserDto>;
+public record GetUserByIdQuery(Guid UserId) : IRequest<UserEntity>, IRequest<GetUserByIdOutDto>;

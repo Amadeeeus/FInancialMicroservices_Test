@@ -1,23 +1,22 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using User.UserService.Application.Dtos;
-using User.UserService.Application.Queries;
 using UserService.Infrastructure.Persistence;
+using UserServiceApplication.Dtos;
+using UserServiceApplication.Queries;
 
 namespace UserServiceApplication.Handlers;
 
-public class GetUserByIdHandler(UserDbContext context, ILogger<GetUserByIdHandler> logger) : IRequestHandler<GetUserByIdQuery, UserDto>
+public class GetUserByIdHandler(UserDbContext context, ILogger<GetUserByIdHandler> logger) : IRequestHandler<GetUserByIdQuery, GetUserByIdOutDto>
 {
-    public async Task<UserDto> Handle(GetUserByIdQuery request, CancellationToken ct)
+    public async Task<GetUserByIdOutDto> Handle(GetUserByIdQuery request, CancellationToken ct)
     {
         return (await context.Users
             .AsNoTracking()
             .Where(x => x.Id == request.UserId)
-            .Select(x => new UserDto(
+            .Select(x => new GetUserByIdOutDto(
                 x.Id, 
                 x.Name, 
-                x.Password,
                 x.Favourites))
             .FirstOrDefaultAsync(ct))!;
     }

@@ -7,16 +7,10 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="AspNetCore.HealthChecks.NpgSql" Version="9.0.0" />
-        <PackageReference Include="AutoMapper" Version="16.1.1" />
-        <PackageReference Include="MediatR" Version="14.1.0" />
         <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.26" />
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.24"/>
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2"/>
+        <PackageReference Include="Yarp.ReverseProxy" Version="2.3.0" />
     </ItemGroup>
 
-    <ItemGroup>
-        <ProjectReference Include="..\FinanceService.Infrastructure\FinanceService.Infrastructure.csproj" />
-        <ProjectReference Include="..\FinanceService.Application\FinanceService.Application.csproj" />
-    </ItemGroup>
 </Project>

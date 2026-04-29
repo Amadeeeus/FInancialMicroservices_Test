@@ -25,10 +25,10 @@ public class AuthentificationUserHandler(UserDbContext context,TokensDbContext t
             .FirstAsync(cancellationToken);
         
         //хешируем пароль, который пришел в команде
-        var crypted = BCrypt.Net.BCrypt.HashPassword(request.Password);
+        
         
         // Верифицируем
-        var valid = BCrypt.Net.BCrypt.Verify(crypted, user.Password);
+        var valid = BCrypt.Net.BCrypt.Verify(request.Password, user.Password);
         
         if (!valid)
         {
