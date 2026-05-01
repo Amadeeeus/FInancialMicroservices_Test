@@ -19,6 +19,9 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MigrationService", "MigrationService", "{574FFA52-B60F-45A2-B530-78BB79AAD715}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "FinanceService", "FinanceService", "{9CB29F0B-47D8-46A8-BE82-75BAB099C036}"
+	ProjectSection(SolutionItems) = preProject
+		TokensDbContextFactory.cs = TokensDbContextFactory.cs
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FinanceService.Api", "FinanceService.Api\FinanceService.Api.csproj", "{95106D08-DC46-4118-BD1F-E040F6BC1E28}"
 EndProject

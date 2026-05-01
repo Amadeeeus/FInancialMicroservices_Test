@@ -1,4 +1,4 @@
-﻿namespace UserService.Infrastructure.Persistence.Jwt.Options;
+﻿namespace UserService.Infrastructure.Jwt.Options;
 
 /// <summary>
 /// Опции конфигурации jwt токена
@@ -23,10 +23,10 @@ public class JwtTokenOptions
     /// <summary>
     /// Время действия access токена
     /// </summary>
-    public int AccessExpiresIn { get; set; }
+    public int AccessTokenLifetimeMinutes { get; set; }
     
     /// <summary>
     /// Время действия refresh токена
     /// </summary>
-    public int RefreshExpiresId { get; set; }
+    public int RefreshTokenLifetimeDays { get; set; }
 }

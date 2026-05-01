@@ -19,11 +19,19 @@ public class Controller(IMapper mapper, ILogger<Controller> logger, IMediator me
     [EnableRateLimiting("DefaultPolicy")]
     [HttpGet("favourite-rates")]
     public async Task<IActionResult> GetUserWithFavouriteRateAsync(GetUserByIdDto dto, CancellationToken cancellationToken)
-    {
-       var command =  mapper.Map<GetUserByIdDto, GetUserWithFavouriteRateCommand>(dto);
+    { 
+        logger.LogInformation("GET /finance/rates | UserId: {UserId}", dto.UserId); 
+        var command =  mapper.Map<GetUserByIdDto, GetUserWithFavouriteRateCommand>(dto); 
+         
+        var result = await mediator.Send(command, cancellationToken);
+
+        if (result.FavouriteRates == null)
+        {
+            logger.LogWarning("GET /finance/rates - not found");
+        }
         
-       var result = await mediator.Send(command, cancellationToken);
-       
+        logger.LogInformation("GET /finance/rates completed | UserId: {UserId} Count: {Count}", result.Id, result.FavouriteRates!.Count);
+        
        return Ok(result);
     }
 }

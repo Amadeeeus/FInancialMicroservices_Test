@@ -1,6 +1,6 @@
 ﻿using UserService.Domain.Entities;
 
-namespace UserService.Infrastructure.Persistence.Jwt.Interfaces;
+namespace UserService.Infrastructure.Jwt.Interfaces;
 
 public interface IJwtTokenGenerator
 {

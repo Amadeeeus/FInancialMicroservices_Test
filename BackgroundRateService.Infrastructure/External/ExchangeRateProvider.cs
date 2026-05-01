@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
+using System.Text;
 using System.Xml.Serialization;
-using BackgroundRateService.Application.Interfaces;
+using BackgroundRateService.Infrastructure.External.Interfaces;
 using BackgroundRateService.Infrastructure.External.XML.Models;
 
 namespace BackgroundRateService.Infrastructure.External;
@@ -12,6 +13,7 @@ public class ExchangeRateProvider(HttpClient client) : IExchangeRateProvider
 {
     public async Task<Dictionary<string, decimal>> GetExchangeRatesAsync(CancellationToken ct)
     {
+        Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
         var stream = await client.GetStreamAsync("http://www.cbr.ru/scripts/XML_daily.asp", ct);
 
         var serializer = new XmlSerializer(typeof(ValCursXml));

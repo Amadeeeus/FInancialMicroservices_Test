@@ -10,6 +10,12 @@ var configuration = builder.Configuration;
 builder.Services.AddHealthChecks();
 builder.Services.AddAuthorization();
 
+builder.Services.AddCors(opt =>
+    opt.AddDefaultPolicy(p =>
+        p.AllowAnyOrigin()
+            .AllowAnyMethod()
+            .AllowAnyHeader()));
+
 builder.Services.AddRateLimiter(options =>
 {
     options.AddPolicy("LoginPolicy", context =>
@@ -57,6 +63,7 @@ builder.Services.AddReverseProxy()
 
 var app = builder.Build();
 
+app.UseCors();
 app.UseAuthentication();
 app.UseAuthorization();
 

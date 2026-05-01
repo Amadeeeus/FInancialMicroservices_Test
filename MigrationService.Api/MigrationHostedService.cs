@@ -1,4 +1,4 @@
-﻿using BackgroundRateService.Infrastructure.Persistence;
+﻿using FinanceService.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using UserService.Infrastructure.Persistence;
 
@@ -21,8 +21,8 @@ public class MigrationHostedService(IServiceProvider serviceProvider, ILogger<Mi
             using var scope = serviceProvider.CreateScope();
 
             var userDb = scope.ServiceProvider.GetRequiredService<UserDbContext>();
-            var tokenDb =  scope.ServiceProvider.GetRequiredService<TokensDbContext>();
             var financialDb = scope.ServiceProvider.GetRequiredService<CurrencyDbContext>();
+            var tokenDb =  scope.ServiceProvider.GetRequiredService<TokensDbContext>();
 
             logger.LogInformation("Применение миграции UserDb");
             await userDb.Database.MigrateAsync(ct);

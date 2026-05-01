@@ -2,10 +2,9 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using User.UserService.Application.Commands;
-using User.UserService.Application.Dtos;
 using UserService.Domain.Entities;
+using UserService.Infrastructure.Jwt.Interfaces;
 using UserService.Infrastructure.Persistence;
-using UserService.Infrastructure.Persistence.Jwt.Interfaces;
 using UserServiceApplication.Dtos;
 using UserServiceApplication.Extensions;
 
@@ -22,16 +21,24 @@ public class AuthentificationUserHandler(UserDbContext context,TokensDbContext t
     {
         var user = await context.Users
             .Where(x => x.Name == request.Name)
-            .FirstAsync(cancellationToken);
-        
-        //хешируем пароль, который пришел в команде
-        
+            .FirstOrDefaultAsync(cancellationToken);
+
+        if (user is null)
+        {
+            logger.LogWarning("User not found");
+            
+            throw new KeyNotFoundException();
+        }
+
+        logger.LogInformation("Authenticating user | ID: {Id}", user.Id);
         
         // Верифицируем
         var valid = BCrypt.Net.BCrypt.Verify(request.Password, user.Password);
         
         if (!valid)
         {
+            logger.LogWarning("Invalid password");
+            
             return null;
         }
         
@@ -56,6 +63,8 @@ public class AuthentificationUserHandler(UserDbContext context,TokensDbContext t
             AccessToken = access,
             RefreshToken = refresh
         };
+
+        logger.LogInformation("User authenticated | ID: {ID}", user.Id);
         
         return tokens;
     }

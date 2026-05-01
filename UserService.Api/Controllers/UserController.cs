@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using User.UserService.Application.Commands;
 using User.UserService.Application.Dtos;
+using UserServiceApplication.Commands;
 using UserServiceApplication.Dtos;
 using UserServiceApplication.Queries;
 
@@ -16,7 +17,7 @@ namespace UserService.Api.Controllers;
 /// <param name="mediator">Библиотека реализации через SQRS</param>
 /// <param name="logger">Стандартная библиотека логирования</param>
 [ApiController]
-[Route("api/user")]
+[Route("api/users")]
 public class UserController(IMediator mediator, ILogger<UserController> logger, IMapper mapper) : ControllerBase
 {
     /// <summary>
@@ -24,14 +25,24 @@ public class UserController(IMediator mediator, ILogger<UserController> logger, 
     /// </summary>
     /// <param name="id">id пользователя</param>
     /// <param name="ct">Cancellation Token</param>
-    /// <returns></returns>
+    /// <returns>404 Not Found, 200 Ok с пользователем по id</returns>
     [Authorize]
     [EnableRateLimiting("DefaultPolicy")]
     [HttpGet("{id}")]
     public async Task<IActionResult> GetUserByIdAsync([FromRoute] GetUserByIdDto id, CancellationToken ct)
     { 
+        logger.LogInformation("GET /users/{UserId}", id);
+        
         var query = mapper.Map<GetUserByIdDto, GetUserByIdQuery>(id); 
-        var result =  await mediator.Send(query, ct); 
+        var result =  await mediator.Send(query, ct);
+
+        if (result is null)
+        {
+            logger.LogWarning("GET /users/{UserId} - not found", id);
+            
+            return NotFound();
+        }
+        
         return Ok(result);
     }
 
@@ -40,12 +51,18 @@ public class UserController(IMediator mediator, ILogger<UserController> logger, 
     /// </summary>
     /// <param name="user">Входная сущность пользователя</param>
     /// <param name="ct">Cancellation Token</param>
-    /// <returns></returns>
+    /// <returns>201 Created</returns>
     [HttpPost("register")]
     public async Task<IActionResult> RegisterUserAsync([FromQuery] CreateUserDto user, CancellationToken ct)
     {
+        logger.LogInformation("POST /auth/register | Name: {Name}", user.Name);
+        
         var command = mapper.Map<CreateUserDto, CreateUserCommand>(user);
+        
         await mediator.Send(command, ct);
+        
+        logger.LogInformation("POST /auth/register completed | Name: {Name}", command.Name);
+        
         return Created();
     }
 
@@ -53,15 +70,19 @@ public class UserController(IMediator mediator, ILogger<UserController> logger, 
     /// Обновление пользователя
     /// </summary>
     /// <param name="user">Входная сущность пользователя</param>
-    /// <param name="ct"></param>
-    /// <returns></returns>
+    /// <param name="ct">Cancellation Token</param>
+    /// <returns>200 Ok</returns>
     [Authorize]
     [EnableRateLimiting("DefaultPolicy")]
     [HttpPost("update")]
     public async Task<IActionResult> UpdateUserAsync([FromQuery] CreateUserDto user, CancellationToken ct)
     {
+        logger.LogInformation("POST /auth/update | Name: {Name}", user.Name);
+        
         var command = mapper.Map<CreateUserDto, UpdateUserCommand>(user);
         await mediator.Send(command, ct);
+        
+        logger.LogInformation("POST /auth/update updated | Name: {Name}", command.Name);
         return Ok();
     }
 
@@ -70,13 +91,22 @@ public class UserController(IMediator mediator, ILogger<UserController> logger, 
     /// </summary>
     /// <param name="user">Входная сущность пользователя</param>
     /// <param name="ct">Cancellation Token</param>
-    /// <returns></returns>
+    /// <returns>200 OK, 401 Unautorized в случае неправильных данных </returns>
     [EnableRateLimiting("LoginPolicy")]
     [HttpPost("auth")]
     public async Task<IActionResult> AuthentificationUserAsync([FromQuery] AuthentificationUserDto user, CancellationToken ct)
     {
+        logger.LogInformation("POST /auth/login | Start authentification");
+        
         var map = mapper.Map<AuthentificationUserDto, AuthentificationUserCommand>(user);
         var tokens = await mediator.Send(map, ct);
+
+        if (tokens is null)
+        {
+            logger.LogWarning("POST /auth/login failed - invalid credentials");
+            
+            return Unauthorized();
+        }
 
         //Запись рефреш в HttpOnly
         Response.Cookies.Append("Refresh", tokens?.RefreshToken!, new CookieOptions
@@ -86,6 +116,7 @@ public class UserController(IMediator mediator, ILogger<UserController> logger, 
             SameSite = SameSiteMode.Strict,
             Expires =  DateTimeOffset.UtcNow.AddDays(7)
         });
+        
 
         return Ok(new { tokens?.AccessToken});
     }
@@ -100,18 +131,27 @@ public class UserController(IMediator mediator, ILogger<UserController> logger, 
     {
         var cookie = Request.Cookies["Refresh"];
         
+        logger.LogInformation("POST /auth/logout | Get Refresh Token");
+        
         if (cookie is null)
         {
+            logger.LogWarning("POST /auth/logout - cookie not found");
+            
             return Unauthorized();
         }
-        
-        var command = mapper.Map<LogoutUserCommand>(cookie);
+
+        var command = new LogoutUserCommand
+        {
+            RefreshToken = cookie
+        };
         
         // Запрос на удаление из БД
         await mediator.Send(command, ct);
         
         // Удаляем из кук
         Response.Cookies.Delete("Refresh");
+        
+        logger.LogInformation("POST /auth/logout completed");
         
         return Ok();
     }
@@ -125,10 +165,14 @@ public class UserController(IMediator mediator, ILogger<UserController> logger, 
     [HttpPost("refresh")]
     public async Task<IActionResult> RefreshUserAsync(CancellationToken ct)
     {
+        logger.LogInformation("POST /auth/refresh");
+        
         var cookie = Request.Cookies["Refresh"];
         
         if (cookie is null)
         {
+            logger.LogWarning("POST /auth/refresh - cookie not found");
+            
             return Unauthorized();
         }
 
@@ -143,6 +187,8 @@ public class UserController(IMediator mediator, ILogger<UserController> logger, 
             SameSite = SameSiteMode.Strict,
             Expires = DateTime.UtcNow.AddDays(7)
         });
+        
+        logger.LogInformation("POST /auth/refresh completed");
         
         return Ok(result?.AccessToken);
     }

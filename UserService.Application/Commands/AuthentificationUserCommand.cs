@@ -1,5 +1,4 @@
 ﻿using MediatR;
-using User.UserService.Application.Dtos;
 using UserServiceApplication.Dtos;
 
 namespace User.UserService.Application.Commands;

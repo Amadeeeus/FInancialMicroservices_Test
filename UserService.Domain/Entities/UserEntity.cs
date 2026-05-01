@@ -37,7 +37,7 @@ public sealed class UserEntity
         Favourites = favourites;
     }
     
-    public void Update(string name, string password, string favourites)
+    public void Update(string name, string password, string? favourites)
     {
         Name = name;
         Password = password;

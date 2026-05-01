@@ -1,8 +1,8 @@
 ﻿using Background.CurrencyRate.BackgroundService;
 using BackgroundRateService.Application;
-using BackgroundRateService.Application.Interfaces;
 using BackgroundRateService.Infrastructure;
 using BackgroundRateService.Infrastructure.External;
+using BackgroundRateService.Infrastructure.External.Interfaces;
 
 namespace Background.CurrencyRate;
 

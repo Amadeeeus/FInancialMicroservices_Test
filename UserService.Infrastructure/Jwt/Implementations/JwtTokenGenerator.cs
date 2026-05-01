@@ -5,10 +5,10 @@ using System.Text;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using UserService.Domain.Entities;
-using IJwtTokenGenerator = UserService.Infrastructure.Persistence.Jwt.Interfaces.IJwtTokenGenerator;
-using JwtTokenOptions = UserService.Infrastructure.Persistence.Jwt.Options.JwtTokenOptions;
+using IJwtTokenGenerator = UserService.Infrastructure.Jwt.Interfaces.IJwtTokenGenerator;
+using JwtTokenOptions = UserService.Infrastructure.Jwt.Options.JwtTokenOptions;
 
-namespace UserService.Infrastructure.Persistence.Jwt.Implementations;
+namespace UserService.Infrastructure.Jwt.Implementations;
 
 /// <summary>
 /// Генератор Jwt токенов
@@ -39,7 +39,7 @@ public class JwtTokenGenerator(IOptions<JwtTokenOptions> options) : IJwtTokenGen
         var tokenDescriptor = new SecurityTokenDescriptor
         {
             Subject = new ClaimsIdentity(claims),
-            Expires = DateTime.UtcNow.AddMinutes(_options.AccessExpiresIn),
+            Expires = DateTime.UtcNow.AddMinutes(_options.AccessTokenLifetimeMinutes),
             Issuer = _options.Issuer,
             Audience = _options.Audience,
             SigningCredentials = credentials

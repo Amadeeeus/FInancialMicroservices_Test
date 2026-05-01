@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using User.UserService.Application.Commands;
 using UserService.Infrastructure.Persistence;
+using UserServiceApplication.Commands;
 using UserServiceApplication.Extensions;
 
 namespace UserServiceApplication.Handlers;
@@ -15,6 +16,8 @@ public class LogoutUserHandler(TokensDbContext context, ILogger<LogoutUserHandle
 {
      public async Task Handle(LogoutUserCommand request, CancellationToken ct)
      {
+         logger.LogInformation("Logout");
+         
          //Обращаемся к методам extensions
          var hash = request.RefreshToken.HashRefreshToken();
          
@@ -26,6 +29,10 @@ public class LogoutUserHandler(TokensDbContext context, ILogger<LogoutUserHandle
              token.Revoked = DateTime.UtcNow;
              
              await context.SaveChangesAsync(ct);
+             
+             logger.LogInformation("Token refreshed");
          }
+         
+         logger.LogWarning("Refresh - token not found or revoked");
      }
 }

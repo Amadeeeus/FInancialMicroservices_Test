@@ -12,5 +12,8 @@ public class InputProfile : Profile
     {
         CreateMap<GetUserByIdDto, GetUserByIdQuery>();
         CreateMap<CreateUserDto, CreateUserCommand>();
+        CreateMap<CreateUserDto, UpdateUserCommand>();
+        CreateMap<AuthentificationUserDto,  AuthentificationUserCommand>();
+        
     }
 }

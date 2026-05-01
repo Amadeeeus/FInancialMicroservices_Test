@@ -21,8 +21,12 @@ public class CreateUserHandler(UserDbContext context, ILogger<CreateUserHandler>
             request.Favourites!
             );
         
+        logger.LogInformation("Creating user | ID: {id}", user.Id);
+        
         await context.Users.AddAsync(user, ct);
         
         await context.SaveChangesAsync(ct);
+        
+        logger.LogInformation("User created | ID: {id}", user.Id);
     }
 }

@@ -7,6 +7,7 @@ using Moq;
 using User.UserService.Application.Commands;
 using User.UserService.Application.Dtos;
 using UserService.Api.Controllers;
+using UserServiceApplication.Commands;
 using UserServiceApplication.Dtos;
 using UserServiceApplication.Queries;
 

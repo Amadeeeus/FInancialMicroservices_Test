@@ -1,4 +1,4 @@
-﻿using BackgroundRateService.Domain.Entities;
+﻿using FinanceService.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace FinanceService.Application.Contracts;

@@ -1,6 +1,7 @@
 ﻿using FinanceService.Application.Contracts;
+using FinanceService.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
-using ExchangeRateEntity = BackgroundRateService.Domain.Entities.ExchangeRateEntity;
+
 
 namespace FinanceService.Infrastructure.Persistence;
 

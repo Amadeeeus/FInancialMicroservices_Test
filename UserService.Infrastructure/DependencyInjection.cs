@@ -4,9 +4,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using UserService.Infrastructure.Jwt.Implementations;
+using UserService.Infrastructure.Jwt.Interfaces;
+using UserService.Infrastructure.Jwt.Options;
 using UserService.Infrastructure.Persistence;
-using UserService.Infrastructure.Persistence.Jwt.Implementations;
-using UserService.Infrastructure.Persistence.Jwt.Options;
 
 namespace UserService.Infrastructure;
 
@@ -19,19 +20,19 @@ public static class DependencyInjection
     {
         services.AddDbContext<UserDbContext>(options =>
         {
-            options.UseNpgsql(
-                configuration
-                    .GetConnectionString("DefaultConnection"),
-                npgsql =>
-                    npgsql
-                        .MigrationsAssembly(typeof(UserDbContext)
-                            .Assembly
-                            .FullName));
+            options.UseNpgsql(configuration
+                    .GetConnectionString("UserDb"));
+            
+        });
+
+        services.AddDbContext<TokensDbContext>(options =>
+        {
+            options.UseNpgsql(configuration.GetConnectionString("TokensDb"));
         });
         
         services.Configure<JwtTokenOptions>(configuration.GetRequiredSection("JwtTokenOptions"));
         
-        services.AddScoped<JwtTokenGenerator, JwtTokenGenerator>();
+        services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
         
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
@@ -46,7 +47,7 @@ public static class DependencyInjection
                     ValidIssuer = configuration["JwtTokenOptions:Issuer"],
                     ValidAudience = configuration["JwtTokenOptions:Audience"],
                     IssuerSigningKey = new SymmetricSecurityKey(
-                        Encoding.UTF8.GetBytes(configuration["JwtTokenOptions:Key"]!)),
+                        Encoding.UTF8.GetBytes(configuration["JwtTokenOptions:Secret"]!)),
                 };
             });
         return services;

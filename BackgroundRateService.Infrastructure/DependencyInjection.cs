@@ -1,4 +1,4 @@
-﻿using BackgroundRateService.Infrastructure.Persistence;
+﻿using FinanceService.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -14,14 +14,8 @@ public static class DependencyInjection
         => collection.AddDbContext<CurrencyDbContext>(options =>
         {
             options.UseNpgsql(configuration
-                    .GetConnectionString("FinancialConnection"),
-                npgsql =>
-                {
-                    npgsql
-                        .MigrationsAssembly(typeof(CurrencyDbContext)
-                            .Assembly
-                            .FullName);
-                });
+                .GetConnectionString("CurrencyDb"));
+            
             options.EnableDetailedErrors();
         });
 }

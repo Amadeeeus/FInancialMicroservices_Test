@@ -1,4 +1,4 @@
-﻿namespace BackgroundRateService.Application.Interfaces;
+﻿namespace BackgroundRateService.Infrastructure.External.Interfaces;
 
 /// <summary>
 /// Контракт провайдера курсов

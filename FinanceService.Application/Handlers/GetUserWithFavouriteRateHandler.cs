@@ -4,20 +4,30 @@ using FinanceService.Application.DTOs;
 using FinanceService.Application.Models;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace FinanceService.Application.Handlers;
 
 /// <summary>
 /// Хендлер получения пользователя с любимыми курсами
 /// </summary>
-public class GetUserWithFavouriteRateHandler(IUserServiceClient client, ICurrencyDbContext context) : IRequestHandler<GetUserWithFavouriteRateCommand, GetUserWithFavouriteRateOutDto>
+public class GetUserWithFavouriteRateHandler(IUserServiceClient client, ICurrencyDbContext context, ILogger<GetUserWithFavouriteRateHandler> logger) : IRequestHandler<GetUserWithFavouriteRateCommand, GetUserWithFavouriteRateOutDto>
 {
     public async Task<GetUserWithFavouriteRateOutDto> Handle(GetUserWithFavouriteRateCommand request, CancellationToken ct)
     {
+        logger.LogInformation("Getting favourite rates | UserId: {UserId}", request.UserId);
+        
         var favouriteRate = new List<FavouriteRate>();
         var user = await client.GetUserById(request.UserId, ct);
-        
-        var rates  = user.Favourites?
+
+        if (user.Content is null)
+        {
+            logger.LogWarning("User not found in UserService | UserId: {UserId}", request.UserId);
+
+            throw new Exception("User not found in UserService ");
+        }
+
+        var rates  = user.Content?.Favourites?
             .Split(',')
             .Select(x => 
                 x.Trim())
@@ -29,7 +39,13 @@ public class GetUserWithFavouriteRateHandler(IUserServiceClient client, ICurrenc
             var favorite = await context.ExchangeRates
                 .AsNoTracking()
                 .FirstOrDefaultAsync(x => x.Name == rate, ct);
-            
+
+            if (favorite is null)
+            {
+                logger.LogWarning("Rates not found in ExchangeRates");
+                continue;
+            }
+
             favouriteRate.Add(new FavouriteRate
             {
                 FavouriteRateId = favorite!.Id,
@@ -38,10 +54,12 @@ public class GetUserWithFavouriteRateHandler(IUserServiceClient client, ICurrenc
             });
         }
 
+        logger.LogInformation("Favourite rates retrieved | UserId: {UserId} Count: {Count}", request.UserId, favouriteRate.Count);
+        
         return new GetUserWithFavouriteRateOutDto
         {
-            Id = user.Id,
-            Name = user.Name,
+            Id = user.Content!.Id,
+            Name = user.Content.Name,
             FavouriteRates = favouriteRate
         };
     }

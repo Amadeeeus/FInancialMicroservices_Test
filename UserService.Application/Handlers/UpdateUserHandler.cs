@@ -13,13 +13,16 @@ public class UpdateUserHandler(UserDbContext context, ILogger<UserServiceApplica
 {
     public async Task Handle(UpdateUserCommand request, CancellationToken ct)
     {
-
+        logger.LogInformation("Updating user | UserId: {UserId}", request.Id);
+        
         var user = await context.Users
                        .FirstOrDefaultAsync(x => x.Id == request.Id, ct) 
                    ?? throw new Exception("User not found");
 
         
         user.Update(request.Name, request.Password, request.Favourites);
+        
+        logger.LogInformation("User updated | UserId: {UserId}", request.Id);
         
         await context.SaveChangesAsync(ct);
     }

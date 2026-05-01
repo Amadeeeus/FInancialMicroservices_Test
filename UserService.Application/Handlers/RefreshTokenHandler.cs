@@ -2,10 +2,9 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using User.UserService.Application.Commands;
-using User.UserService.Application.Dtos;
 using UserService.Domain.Entities;
+using UserService.Infrastructure.Jwt.Interfaces;
 using UserService.Infrastructure.Persistence;
-using UserService.Infrastructure.Persistence.Jwt.Interfaces;
 using UserServiceApplication.Dtos;
 using UserServiceApplication.Extensions;
 
@@ -22,6 +21,7 @@ public class RefreshTokenHandler(TokensDbContext context, UserDbContext userCont
 {
     public async Task<AuthentificationUserOutDto> Handle(RefreshTokenCommand request, CancellationToken ct)
     {
+        logger.LogInformation("Refreshing token");
         var hash = request.RefreshToken.HashRefreshToken();
          
         var token = await context.GetValidRefreshToken(hash, ct);
@@ -33,6 +33,8 @@ public class RefreshTokenHandler(TokensDbContext context, UserDbContext userCont
              
             await context.SaveChangesAsync(ct);
         }
+        
+        logger.LogWarning("Refresh - token not found or revoked");
 
         // Получаем пользователя по Id из БД users
         var user = await userContext.Users.FirstOrDefaultAsync(x => x.Id == token!.UserId, ct);
@@ -50,6 +52,8 @@ public class RefreshTokenHandler(TokensDbContext context, UserDbContext userCont
             RefreshToken = refresh.HashRefreshToken(),
         }, ct);
 
+        logger.LogInformation("Token refreshed | UserId: {UserId}", user.Id);
+        
         return new AuthentificationUserOutDto
         {
             AccessToken = access,

@@ -1,5 +1,5 @@
 ﻿using FinanceService.Application.Contracts;
-
+using FinanceService.Infrastructure.Persistence;
 using Refit;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,6 +13,9 @@ public static class DependencyInjection
         services.AddRefitClient<IUserServiceClient>()
             .ConfigureHttpClient(c =>
                 c.BaseAddress = new Uri(configuration.GetSection("Services:UserService").Value!));
+        
+        services.AddNpgsql<CurrencyDbContext>(configuration
+            .GetConnectionString("CurrencyDb"));
         
         return services;
     }

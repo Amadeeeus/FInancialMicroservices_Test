@@ -12,8 +12,9 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\BackgroundRateService.Domain\BackgroundRateService.Domain.csproj" />
-      <ProjectReference Include="..\FinanceService.Infrastructure\FinanceService.Infrastructure.csproj" />
+        <ProjectReference Include="..\BackgroundRateService.Domain\BackgroundRateService.Domain.csproj" />
+        <ProjectReference Include="..\BackgroundRateService.Infrastructure\BackgroundRateService.Infrastructure.csproj" />
+        <ProjectReference Include="..\FinanceService.Domain\FinanceService.Domain.csproj" />
     </ItemGroup>
 
 

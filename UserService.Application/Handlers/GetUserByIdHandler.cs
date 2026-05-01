@@ -11,6 +11,8 @@ public class GetUserByIdHandler(UserDbContext context, ILogger<GetUserByIdHandle
 {
     public async Task<GetUserByIdOutDto> Handle(GetUserByIdQuery request, CancellationToken ct)
     {
+        logger.LogInformation("Getting user | UserId: {UserId}", request.UserId);
+        
         return (await context.Users
             .AsNoTracking()
             .Where(x => x.Id == request.UserId)
