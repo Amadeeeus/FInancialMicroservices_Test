@@ -4,8 +4,8 @@ WORKDIR /app
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 COPY . .
-RUN dotnet publish MigrationService.Api/MigrationService.Api.csproj -c Release -o /app/publish
+RUN dotnet publish BackgroundRateService.Background/BackgroundRateService.Background.csproj -c Release -o /app/publish
 FROM base AS final
 WORKDIR /app
 COPY --from=build /app/publish .
-ENTRYPOINT ["dotnet", "MigrationService.Api.dll"]
+ENTRYPOINT ["dotnet", "BackgroundRateService.Background.dll"]
