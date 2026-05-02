@@ -3,7 +3,7 @@
 /// <summary>
 /// Входная модель создания/обновления пользователя
 /// </summary>
-public class CreateUserDto
+public record CreateUserDto
 {
     /// <summary>
     /// Имя пользователя

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using BackgroundRateService.Application.Commands;
+﻿using BackgroundRateService.Application.Commands;
 using BackgroundRateService.Infrastructure.External.Interfaces;
 using FinanceService.Domain.Entities;
 using FinanceService.Infrastructure.Persistence;

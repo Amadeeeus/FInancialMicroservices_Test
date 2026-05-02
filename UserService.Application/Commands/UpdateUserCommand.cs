@@ -1,6 +1,6 @@
 ﻿using MediatR;
 
-namespace User.UserService.Application.Commands;
+namespace UserServiceApplication.Commands;
 
 /// <summary>
 /// Команда изменения/создания пользователя

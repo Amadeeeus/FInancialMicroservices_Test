@@ -1,4 +1,4 @@
-﻿namespace User.UserService.Application.Dtos;
+﻿namespace UserServiceApplication.Dtos;
 
 public record AuthentificationUserDto
 {

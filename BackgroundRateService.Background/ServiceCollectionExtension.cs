@@ -3,8 +3,6 @@ using BackgroundRateService.Application;
 using BackgroundRateService.Infrastructure;
 using BackgroundRateService.Infrastructure.External;
 using BackgroundRateService.Infrastructure.External.Interfaces;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Background.CurrencyRate;
 

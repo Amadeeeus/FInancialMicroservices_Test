@@ -1,6 +1,4 @@
 ﻿using AutoMapper;
-using User.UserService.Application.Commands;
-using User.UserService.Application.Dtos;
 using UserService.Domain.Entities;
 using UserServiceApplication.Commands;
 using UserServiceApplication.Dtos;

@@ -26,9 +26,10 @@ public class Controller(ILogger<Controller> logger, IMediator mediator) : Contro
          
         var result = await mediator.Send(command, cancellationToken);
 
-        if (result.FavouriteRates == null)
+        if (result is null ||result.FavouriteRates == null)
         {
             logger.LogWarning("GET /finance/rates - not found");
+            return NotFound();
         }
         
         logger.LogInformation("GET /finance/rates completed | UserId: {UserId} Count: {Count}", result.Id, result.FavouriteRates!.Count);

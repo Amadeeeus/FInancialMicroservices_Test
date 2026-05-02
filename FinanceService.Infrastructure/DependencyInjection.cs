@@ -1,9 +1,9 @@
 ﻿using FinanceService.Application.Contracts;
 using FinanceService.Infrastructure.Handlers;
 using FinanceService.Infrastructure.Persistence;
-using Refit;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Refit;
 
 namespace FinanceService.Infrastructure;
 

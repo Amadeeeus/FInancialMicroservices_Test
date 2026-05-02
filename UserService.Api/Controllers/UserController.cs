@@ -3,8 +3,6 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
-using User.UserService.Application.Commands;
-using User.UserService.Application.Dtos;
 using UserService.Api.Helpers;
 using UserServiceApplication.Commands;
 using UserServiceApplication.Dtos;

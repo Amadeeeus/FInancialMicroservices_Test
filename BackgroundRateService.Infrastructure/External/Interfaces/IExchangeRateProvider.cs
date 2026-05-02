@@ -1,8 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
-
-namespace BackgroundRateService.Infrastructure.External.Interfaces;
+﻿namespace BackgroundRateService.Infrastructure.External.Interfaces;
 
 /// <summary>
 /// Контракт провайдера курсов

@@ -3,7 +3,7 @@
 /// <summary>
 /// Возвращение обоих токенов
 /// </summary>
-public class AuthentificationUserOutDto
+public record AuthentificationUserOutDto
 {
     /// <summary>
     /// Access

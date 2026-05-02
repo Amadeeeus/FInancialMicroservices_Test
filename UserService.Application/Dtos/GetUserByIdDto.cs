@@ -3,7 +3,7 @@
 /// <summary>
 /// Входная модель для получения пользователя
 /// </summary>
-public class GetUserByIdDto
+public record GetUserByIdDto
 {
     
     public required Guid UserId { get; set; }

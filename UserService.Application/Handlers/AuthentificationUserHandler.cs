@@ -1,7 +1,6 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using User.UserService.Application.Commands;
 using UserService.Domain.Entities;
 using UserService.Infrastructure.Jwt.Interfaces;
 using UserService.Infrastructure.Persistence;

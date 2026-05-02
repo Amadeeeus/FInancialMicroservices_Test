@@ -1,5 +1,5 @@
 ﻿using FluentValidation;
-using User.UserService.Application.Commands;
+using UserServiceApplication.Commands;
 
 namespace UserServiceApplication.Validators;
 

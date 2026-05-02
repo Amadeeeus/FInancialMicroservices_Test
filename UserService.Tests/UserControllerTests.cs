@@ -4,8 +4,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
-using User.UserService.Application.Commands;
-using User.UserService.Application.Dtos;
 using UserService.Api.Controllers;
 using UserServiceApplication.Commands;
 using UserServiceApplication.Dtos;
@@ -25,19 +23,15 @@ public class UserControllerTests
         _mapperMock = new Mock<IMapper>();
         var loggerMock = new Mock<ILogger<UserController>>();
 
-        _controller = new UserController(
-            _mediatorMock.Object,
-            loggerMock.Object,
-            _mapperMock.Object);
-
-        // Дефолтный HttpContext
-        _controller.ControllerContext = new ControllerContext
-        {
-            HttpContext = new DefaultHttpContext()
-        };
+        _controller = new UserController(_mediatorMock.Object, loggerMock.Object, _mapperMock.Object)
+            {
+                ControllerContext = new ControllerContext
+                {
+                    HttpContext = new DefaultHttpContext()
+                }
+            };
     }
-
-    // ==================== Register ====================
+    
 
     [Fact]
     public async Task Register_ValidInput_Returns201()
@@ -83,8 +77,6 @@ public class UserControllerTests
         _mediatorMock.Verify(m => m.Send(command, It.IsAny<CancellationToken>()), Times.Once);
     }
 
-    // ==================== GetUserById ====================
-
     [Fact]
     public async Task GetUserById_UserExists_Returns200()
     {
@@ -123,8 +115,6 @@ public class UserControllerTests
         // Assert
         Assert.IsType<NotFoundResult>(result);
     }
-
-    // ==================== Auth (Login) ====================
 
     [Fact]
     public async Task Login_ValidCredentials_Returns200WithAccessToken()
@@ -176,8 +166,6 @@ public class UserControllerTests
         Assert.IsType<UnauthorizedResult>(result);
     }
 
-    // ==================== Logout ====================
-
     [Fact]
     public async Task Logout_WithValidCookie_ReturnsOk()
     {
@@ -212,8 +200,6 @@ public class UserControllerTests
         // Assert
         Assert.IsType<UnauthorizedResult>(result);
     }
-
-    // ==================== Refresh ====================
 
     [Fact]
     public async Task Refresh_ValidCookie_Returns200()

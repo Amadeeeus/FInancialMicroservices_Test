@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
-using Microsoft.OpenApi;
 using Microsoft.OpenApi.Models;
 using UserService.Infrastructure;
 using UserServiceApplication;
@@ -36,6 +35,8 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 builder.Services.AddControllers();
+
+builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddHealthChecks()
     .AddNpgSql(configuration.GetConnectionString("UserDb")!, name: "UserDbHealthCheck")

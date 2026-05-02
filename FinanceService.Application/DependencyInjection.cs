@@ -1,4 +1,7 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using FinanceService.Application.Behaviors;
+using FluentValidation;
+using MediatR;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace FinanceService.Application;
@@ -11,7 +14,11 @@ public static class DependencyInjection
         {
             cfg.RegisterServicesFromAssembly(typeof(DependencyInjection)
                 .Assembly);
+            
+            cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
         });
+        
+        services.AddValidatorsFromAssembly(typeof(DependencyInjection).Assembly);
         
         return services;
     }

@@ -82,7 +82,10 @@ public class FinancialServiceTests
         _mediatorMock
             .Setup(m => m.Send(It.IsAny<GetUserWithFavouriteRateCommand>(),
                 It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new GetUserWithFavouriteRateOutDto());
+            .ReturnsAsync(new GetUserWithFavouriteRateOutDto
+            {
+                FavouriteRates = []
+            });
 
         // Act
         await _controller.GetUserWithFavouriteRateAsync(userId, CancellationToken.None);

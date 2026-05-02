@@ -1,8 +1,8 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using User.UserService.Application.Commands;
 using UserService.Infrastructure.Persistence;
+using UserServiceApplication.Commands;
 
 namespace UserServiceApplication.Handlers;
 
