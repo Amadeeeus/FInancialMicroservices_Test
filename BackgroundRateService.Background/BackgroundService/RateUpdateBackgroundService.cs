@@ -1,5 +1,9 @@
-﻿using BackgroundRateService.Application.Commands;
+﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
+using BackgroundRateService.Application.Commands;
 using MediatR;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Background.CurrencyRate.BackgroundService;
 
