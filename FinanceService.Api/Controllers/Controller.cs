@@ -1,6 +1,4 @@
-﻿using AutoMapper;
-using FinanceService.Application.Commands;
-using FinanceService.Application.DTOs;
+﻿using FinanceService.Application.Commands;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,16 +10,19 @@ namespace FinanceService.Api.Controllers;
 /// Контроллер получения пользователя и его любимой валюты
 /// </summary>
 [ApiController]
-[Route("api/v1/financial/[controller]")]
-public class Controller(IMapper mapper, ILogger<Controller> logger, IMediator mediator) : ControllerBase
+[Route("api/v1/financial")]
+public class Controller(ILogger<Controller> logger, IMediator mediator) : ControllerBase
 {
     [Authorize]
     [EnableRateLimiting("DefaultPolicy")]
-    [HttpGet("favourite-rates")]
-    public async Task<IActionResult> GetUserWithFavouriteRateAsync(GetUserByIdDto dto, CancellationToken cancellationToken)
+    [HttpGet("favourite-rates/{userId}")]
+    public async Task<IActionResult> GetUserWithFavouriteRateAsync([FromRoute]Guid userId, CancellationToken cancellationToken)
     { 
-        logger.LogInformation("GET /finance/rates | UserId: {UserId}", dto.UserId); 
-        var command =  mapper.Map<GetUserByIdDto, GetUserWithFavouriteRateCommand>(dto); 
+        logger.LogInformation("GET /finance/rates | UserId: {UserId}", userId);
+        var command = new GetUserWithFavouriteRateCommand()
+        {
+            UserId = userId
+        };
          
         var result = await mediator.Send(command, cancellationToken);
 

@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using UserService.Infrastructure.Persistence;
@@ -20,6 +21,6 @@ public class GetUserByIdHandler(UserDbContext context, ILogger<GetUserByIdHandle
                 x.Id, 
                 x.Name, 
                 x.Favourites))
-            .FirstOrDefaultAsync(ct))!;
+            .FirstOrDefaultAsync(ct))! ?? throw new KeyNotFoundException();
     }
 }

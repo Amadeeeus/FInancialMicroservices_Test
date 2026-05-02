@@ -1,4 +1,5 @@
-﻿using FinanceService.Application.Commands;
+﻿using System.Globalization;
+using FinanceService.Application.Commands;
 using FinanceService.Application.Contracts;
 using FinanceService.Application.DTOs;
 using FinanceService.Application.Models;
@@ -20,19 +21,22 @@ public class GetUserWithFavouriteRateHandler(IUserServiceClient client, ICurrenc
         var favouriteRate = new List<FavouriteRate>();
         var user = await client.GetUserById(request.UserId, ct);
 
-        if (user.Content is null)
-        {
-            logger.LogWarning("User not found in UserService | UserId: {UserId}", request.UserId);
+        // if (user.Content is null)
+        // {
+        //     logger.LogWarning("User not found in UserService | UserId: {UserId}", request.UserId);
+        //
+        //     throw new Exception("User not found in UserService ");
+        // }
 
-            throw new Exception("User not found in UserService ");
-        }
-
+        logger.LogCritical("{rates}",  user.Content.Favourites);
+        
         var rates  = user.Content?.Favourites?
             .Split(',')
             .Select(x => 
                 x.Trim())
             .ToList();
         
+        logger.LogCritical("{rates}",  rates);
         
         foreach (var rate in rates!)
         {
@@ -50,7 +54,7 @@ public class GetUserWithFavouriteRateHandler(IUserServiceClient client, ICurrenc
             {
                 FavouriteRateId = favorite!.Id,
                 Name = favorite.Name,
-                Rate = rate
+                Rate = favorite.Rate.ToString(CultureInfo.InvariantCulture)
             });
         }
 

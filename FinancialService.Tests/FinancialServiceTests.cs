@@ -1,5 +1,4 @@
 using System.Globalization;
-using AutoMapper;
 using FinanceService.Application.Commands;
 using FinanceService.Application.DTOs;
 using FinanceService.Application.Models;
@@ -19,22 +18,18 @@ public class FinancialServiceTests
     public FinancialServiceTests()
     {
         _mediatorMock = new Mock<IMediator>();
-        var mapperMock = new Mock<IMapper>();
         var loggerMock = new Mock<ILogger<Controller>>();
-        _controller = new Controller(mapperMock.Object, loggerMock.Object, _mediatorMock.Object);
+        _controller = new Controller(loggerMock.Object, _mediatorMock.Object);
     }
 
     [Fact]
     public async Task GetUserWithFavouriteRates_UserExists_Returns200()
     {
         // Arrange
-        var userId = new GetUserByIdDto
-        {
-            UserId = Guid.NewGuid(),
-        };
+        var userId = Guid.NewGuid();
         var expectedDto = new GetUserWithFavouriteRateOutDto
         {
-            Id = userId.UserId,
+            Id = userId,
             Name = "Pavel",
             FavouriteRates = new List<FavouriteRate>
             {
@@ -45,7 +40,7 @@ public class FinancialServiceTests
 
         _mediatorMock
             .Setup(m => m.Send(
-                It.Is<GetUserWithFavouriteRateCommand>(c => c.UserId == userId.UserId),
+                It.Is<GetUserWithFavouriteRateCommand>(c => c.UserId == userId),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(expectedDto);
 
@@ -55,7 +50,7 @@ public class FinancialServiceTests
         // Assert
         var okResult = Assert.IsType<OkObjectResult>(result);
         var dto = Assert.IsType<GetUserWithFavouriteRateOutDto>(okResult.Value);
-        Assert.Equal(userId.UserId, dto.Id);
+        Assert.Equal(userId, dto.Id);
         Assert.Equal(2, dto.FavouriteRates!.Count);
     }
 
@@ -63,10 +58,7 @@ public class FinancialServiceTests
     public async Task GetUserWithFavouriteRates_UserNotFound_Returns404()
     {
         // Arrange
-        var userId = new GetUserByIdDto
-        {
-            UserId = Guid.NewGuid(),
-        };
+        var userId = Guid.NewGuid();
 
         _mediatorMock
             .Setup(m => m.Send(
@@ -85,10 +77,7 @@ public class FinancialServiceTests
     public async Task GetUserWithFavouriteRates_SendsCorrectUserId()
     {
         // Arrange
-        var userId = new GetUserByIdDto
-        {
-            UserId = Guid.NewGuid(),
-        };
+       var userId = Guid.NewGuid();
 
         _mediatorMock
             .Setup(m => m.Send(It.IsAny<GetUserWithFavouriteRateCommand>(),
@@ -101,7 +90,7 @@ public class FinancialServiceTests
         // Assert — убеждаемся что передали правильный userId
         _mediatorMock.Verify(
             m => m.Send(
-                It.Is<GetUserWithFavouriteRateCommand>(c => c.UserId == userId.UserId),
+                It.Is<GetUserWithFavouriteRateCommand>(c => c.UserId == userId),
                 It.IsAny<CancellationToken>()),
             Times.Once);
     }

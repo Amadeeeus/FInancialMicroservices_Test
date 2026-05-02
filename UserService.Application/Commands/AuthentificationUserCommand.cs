@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using UserServiceApplication.Dtos;
 
-namespace User.UserService.Application.Commands;
+namespace UserServiceApplication.Commands;
 
 /// <summary>
 /// Команда авторизации пользователя

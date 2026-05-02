@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.OpenApi;
 using Microsoft.OpenApi.Models;
@@ -43,6 +44,23 @@ builder.Services.AddHealthChecks()
 builder.Services.AddApplication(configuration).AddInfrastructure(configuration);
 
 var app = builder.Build();
+
+app.UseExceptionHandler(errorApp =>
+{
+    errorApp.Run(async context =>
+    {
+        var exception = context.Features.Get<IExceptionHandlerFeature>()?.Error;
+        var (status, message) = exception switch
+        {
+            UnauthorizedAccessException => (401, "Unauthorized"),
+            KeyNotFoundException => (404, "Not found"),
+            ArgumentException e => (400, e.Message),
+            _ => (500, "Internal server error")
+        };
+        context.Response.StatusCode = status;
+        await context.Response.WriteAsJsonAsync(new { error = message });
+    });
+});
 
 if (app.Environment.IsDevelopment())
 {

@@ -14,7 +14,6 @@ public static class ServiceCollectionExtensions
         => services.AddInfrastructure(configuration);
 
     public static void AddJwtAuthentication(this IServiceCollection services, IConfiguration configuration)
-
         => services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
             {
@@ -28,7 +27,7 @@ public static class ServiceCollectionExtensions
                     ValidIssuer = configuration["JwtTokenOptions:Issuer"],
                     ValidAudience = configuration["JwtTokenOptions:Audience"],
                     IssuerSigningKey = new SymmetricSecurityKey(
-                        Encoding.UTF8.GetBytes(configuration["JwtTokenOptions:Key"]!)),
+                        Encoding.UTF8.GetBytes(configuration["JwtTokenOptions:Secret"]!)),
                 };
             });
 }

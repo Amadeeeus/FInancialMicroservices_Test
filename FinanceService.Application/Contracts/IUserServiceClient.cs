@@ -5,6 +5,6 @@ namespace FinanceService.Application.Contracts;
 
 public interface IUserServiceClient
 {
-    [Get("/users/{id}")]
-    Task<ApiResponse<GetUserByIdOutDto>>GetUserById(Guid id, CancellationToken ct);
+    [Get("/api/users/{userId}")]
+    Task<ApiResponse<GetUserByIdOutDto>>GetUserById(Guid userId, CancellationToken ct);
 }

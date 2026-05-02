@@ -5,5 +5,6 @@
 /// </summary>
 public class GetUserByIdDto
 {
+    
     public required Guid UserId { get; set; }
 }

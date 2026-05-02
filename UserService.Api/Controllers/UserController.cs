@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using User.UserService.Application.Commands;
 using User.UserService.Application.Dtos;
+using UserService.Api.Helpers;
 using UserServiceApplication.Commands;
 using UserServiceApplication.Dtos;
 using UserServiceApplication.Queries;
@@ -24,24 +25,20 @@ public class UserController(IMediator mediator, ILogger<UserController> logger, 
     /// Получение пользователя по ID
     /// </summary>
     /// <param name="id">id пользователя</param>
+    /// <param name="userId">id пользователя</param>
     /// <param name="ct">Cancellation Token</param>
     /// <returns>404 Not Found, 200 Ok с пользователем по id</returns>
     [Authorize]
     [EnableRateLimiting("DefaultPolicy")]
-    [HttpGet("{id}")]
-    public async Task<IActionResult> GetUserByIdAsync([FromRoute] GetUserByIdDto id, CancellationToken ct)
+    [HttpGet("{userId}")]
+    public async Task<IActionResult> GetUserByIdAsync([FromRoute] Guid userId, CancellationToken ct)
     { 
-        logger.LogInformation("GET /users/{UserId}", id);
+        logger.LogInformation("GET /users/{UserId}", userId);
         
-        var query = mapper.Map<GetUserByIdDto, GetUserByIdQuery>(id); 
+        var query = new GetUserByIdQuery(userId);
+        
+        logger.LogInformation("mapping{UserId}", query.UserId);
         var result =  await mediator.Send(query, ct);
-
-        if (result is null)
-        {
-            logger.LogWarning("GET /users/{UserId} - not found", id);
-            
-            return NotFound();
-        }
         
         return Ok(result);
     }
@@ -52,8 +49,10 @@ public class UserController(IMediator mediator, ILogger<UserController> logger, 
     /// <param name="user">Входная сущность пользователя</param>
     /// <param name="ct">Cancellation Token</param>
     /// <returns>201 Created</returns>
+    [EnableRateLimiting("LoginPolicy")]
+    [AllowAnonymous]
     [HttpPost("register")]
-    public async Task<IActionResult> RegisterUserAsync([FromQuery] CreateUserDto user, CancellationToken ct)
+    public async Task<IActionResult> RegisterUserAsync([FromBody] CreateUserDto user, CancellationToken ct)
     {
         logger.LogInformation("POST /auth/register | Name: {Name}", user.Name);
         
@@ -75,7 +74,7 @@ public class UserController(IMediator mediator, ILogger<UserController> logger, 
     [Authorize]
     [EnableRateLimiting("DefaultPolicy")]
     [HttpPost("update")]
-    public async Task<IActionResult> UpdateUserAsync([FromQuery] CreateUserDto user, CancellationToken ct)
+    public async Task<IActionResult> UpdateUserAsync([FromBody] CreateUserDto user, CancellationToken ct)
     {
         logger.LogInformation("POST /auth/update | Name: {Name}", user.Name);
         
@@ -93,8 +92,9 @@ public class UserController(IMediator mediator, ILogger<UserController> logger, 
     /// <param name="ct">Cancellation Token</param>
     /// <returns>200 OK, 401 Unautorized в случае неправильных данных </returns>
     [EnableRateLimiting("LoginPolicy")]
+    [AllowAnonymous]
     [HttpPost("auth")]
-    public async Task<IActionResult> AuthentificationUserAsync([FromQuery] AuthentificationUserDto user, CancellationToken ct)
+    public async Task<IActionResult> AuthentificationUserAsync([FromBody] AuthentificationUserDto user, CancellationToken ct)
     {
         logger.LogInformation("POST /auth/login | Start authentification");
         
@@ -109,14 +109,7 @@ public class UserController(IMediator mediator, ILogger<UserController> logger, 
         }
 
         //Запись рефреш в HttpOnly
-        Response.Cookies.Append("Refresh", tokens?.RefreshToken!, new CookieOptions
-        {
-            HttpOnly = true,
-            Secure = true,
-            SameSite = SameSiteMode.Strict,
-            Expires =  DateTimeOffset.UtcNow.AddDays(7)
-        });
-        
+        Response.Cookies.Append("Refresh", tokens?.RefreshToken!, CookieHelper.AddHttpOnlyCookie());
 
         return Ok(new { tokens?.AccessToken});
     }
@@ -161,7 +154,7 @@ public class UserController(IMediator mediator, ILogger<UserController> logger, 
     /// </summary>
     /// <param name="ct"></param>
     /// <returns></returns>
-    [Authorize]
+    [AllowAnonymous]
     [HttpPost("refresh")]
     public async Task<IActionResult> RefreshUserAsync(CancellationToken ct)
     {
@@ -176,17 +169,14 @@ public class UserController(IMediator mediator, ILogger<UserController> logger, 
             return Unauthorized();
         }
 
-        var command = mapper.Map<RefreshTokenCommand>(cookie);
+        var command = new RefreshTokenCommand()
+        {
+            RefreshToken = cookie
+        };
         
         var result = await mediator.Send(command, ct);
-        
-        Response.Cookies.Append("Refresh",result?.RefreshToken!, new CookieOptions
-        {
-            HttpOnly = true,
-            Secure = true,
-            SameSite = SameSiteMode.Strict,
-            Expires = DateTime.UtcNow.AddDays(7)
-        });
+
+        Response.Cookies.Append("Refresh", result?.RefreshToken!, CookieHelper.AddHttpOnlyCookie());
         
         logger.LogInformation("POST /auth/refresh completed");
         

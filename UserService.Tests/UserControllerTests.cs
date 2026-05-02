@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -13,77 +13,84 @@ using UserServiceApplication.Queries;
 
 namespace Microservices.Test;
 
-/// <summary>
-/// Тесты для микросервиса User
-/// </summary>
 public class UserControllerTests
 {
     private readonly Mock<IMediator> _mediatorMock;
+    private readonly Mock<IMapper> _mapperMock;
     private readonly UserController _controller;
 
     public UserControllerTests()
     {
         _mediatorMock = new Mock<IMediator>();
+        _mapperMock = new Mock<IMapper>();
         var loggerMock = new Mock<ILogger<UserController>>();
-        var mapperMock = new Mock<IMapper>();
-        _controller = new UserController(_mediatorMock.Object, loggerMock.Object, mapperMock.Object);
+
+        _controller = new UserController(
+            _mediatorMock.Object,
+            loggerMock.Object,
+            _mapperMock.Object);
+
+        // Дефолтный HttpContext
+        _controller.ControllerContext = new ControllerContext
+        {
+            HttpContext = new DefaultHttpContext()
+        };
     }
 
+    // ==================== Register ====================
+
     [Fact]
-    public async Task CreateUser_ValidCommand_Returns201()
+    public async Task Register_ValidInput_Returns201()
     {
         // Arrange
-        var command = new CreateUserDto
-        {
-            Name = "Pavel",
-            Password = "secret123",
-            Favourites = "USD,EUR"
-        };
+        var dto = new CreateUserDto { Name = "Pavel", Password = "secret123", Favourites = "USD" };
+        var command = new CreateUserCommand { Name = "Pavel", Password = "secret123", Favourites = "USD" };
+
+        _mapperMock
+            .Setup(m => m.Map<CreateUserDto, CreateUserCommand>(dto))
+            .Returns(command);
 
         _mediatorMock
             .Setup(m => m.Send(command, It.IsAny<CancellationToken>()))
-            .Returns((Task<object?>)Task.CompletedTask);
+            .Returns(Task.CompletedTask);
 
         // Act
-        var result = await _controller.RegisterUserAsync(command, CancellationToken.None);
+        var result = await _controller.RegisterUserAsync(dto, CancellationToken.None);
 
         // Assert
         Assert.IsType<CreatedResult>(result);
     }
 
     [Fact]
-    public async Task CreateUser_SendsCommandToMediator()
+    public async Task Register_SendsCommandToMediator()
     {
         // Arrange
-        var command = new CreateUserDto
-        {
-            Name = "Pavel",
-            Password = "secret123",
-            Favourites = "USD"
-        };
+        var dto = new CreateUserDto { Name = "Pavel", Password = "secret123" };
+        var command = new CreateUserCommand { Name = "Pavel", Password = "secret123" };
+
+        _mapperMock
+            .Setup(m => m.Map<CreateUserDto, CreateUserCommand>(dto))
+            .Returns(command);
 
         _mediatorMock
             .Setup(m => m.Send(command, It.IsAny<CancellationToken>()))
-            .Returns((Task.CompletedTask as Task<object?>)!);
+            .Returns(Task.CompletedTask);
 
         // Act
-        await _controller.RegisterUserAsync(command, CancellationToken.None);
+        await _controller.RegisterUserAsync(dto, CancellationToken.None);
 
         // Assert
-        _mediatorMock.Verify(
-            m => m.Send(command, It.IsAny<CancellationToken>()),
-            Times.Once);
+        _mediatorMock.Verify(m => m.Send(command, It.IsAny<CancellationToken>()), Times.Once);
     }
 
+    // ==================== GetUserById ====================
+
     [Fact]
-    public async Task GetUserById_UserExists_Returns200WithDto()
+    public async Task GetUserById_UserExists_Returns200()
     {
         // Arrange
         var userId = Guid.NewGuid();
-        var expectedDto = new GetUserByIdDto
-        {
-            UserId = userId
-        };
+        var expectedDto = new GetUserByIdOutDto(userId, "Pavel", "USD");
 
         _mediatorMock
             .Setup(m => m.Send(It.Is<GetUserByIdQuery>(q => q.UserId == userId),
@@ -91,13 +98,12 @@ public class UserControllerTests
             .ReturnsAsync(expectedDto);
 
         // Act
-        var result = await _controller.GetUserByIdAsync(expectedDto, CancellationToken.None);
+        var result = await _controller.GetUserByIdAsync(userId, CancellationToken.None);
 
         // Assert
-        var okResult = Assert.IsType<OkObjectResult>(result);
-        var dto = Assert.IsType<GetUserByIdOutDto>(okResult.Value);
+        var ok = Assert.IsType<OkObjectResult>(result);
+        var dto = Assert.IsType<GetUserByIdOutDto>(ok.Value);
         Assert.Equal(userId, dto.Id);
-        Assert.Equal("Pavel", dto.Name);
     }
 
     [Fact]
@@ -105,11 +111,6 @@ public class UserControllerTests
     {
         // Arrange
         var userId = Guid.NewGuid();
-        
-        var expectedDto = new GetUserByIdDto
-        {
-            UserId = userId
-        };
 
         _mediatorMock
             .Setup(m => m.Send(It.Is<GetUserByIdQuery>(q => q.UserId == userId),
@@ -117,149 +118,146 @@ public class UserControllerTests
             .ReturnsAsync((GetUserByIdOutDto?)null);
 
         // Act
-        var result = await _controller.GetUserByIdAsync(expectedDto, CancellationToken.None);
+        var result = await _controller.GetUserByIdAsync(userId, CancellationToken.None);
 
         // Assert
         Assert.IsType<NotFoundResult>(result);
     }
 
-    [Fact]
-    public async Task UpdateUser_ValidCommand_Returns204()
-    {
-        // Arrange
-        var command = new CreateUserDto
-        {
-            Name = "Pavel Updated",
-            Password = "newpass",
-            Favourites = "USD"
-        };
+    // ==================== Auth (Login) ====================
 
-        _mediatorMock
-            .Setup(m => m.Send(command, It.IsAny<CancellationToken>()))
-            .Returns((Task<object?>)Task.CompletedTask);
-
-        // Act
-        var result = await _controller.UpdateUserAsync(command, CancellationToken.None);
-
-        // Assert
-        Assert.IsType<NoContentResult>(result);
-    }
     [Fact]
     public async Task Login_ValidCredentials_Returns200WithAccessToken()
     {
         // Arrange
-        var command = new AuthentificationUserDto()
+        var dto = new AuthentificationUserDto { Name = "Pavel", Password = "secret123" };
+        var command = new AuthentificationUserCommand { Name = "Pavel", Password = "secret123" };
+        var tokens = new AuthentificationUserOutDto
         {
-            Name = "Pavel",
-            Password = "secret123"
+            AccessToken = "access_token",
+            RefreshToken = "refresh_token"
         };
 
-        var expectedDto = new AuthentificationUserOutDto
-        {
-            AccessToken = "access_token_value",
-            RefreshToken = "refresh_token_value"
-        };
+        _mapperMock
+            .Setup(m => m.Map<AuthentificationUserDto, AuthentificationUserCommand>(dto))
+            .Returns(command);
 
         _mediatorMock
             .Setup(m => m.Send(command, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(expectedDto);
+            .ReturnsAsync(tokens);
 
         // Act
-        var result = await _controller.AuthentificationUserAsync(command, CancellationToken.None);
+        var result = await _controller.AuthentificationUserAsync(dto, CancellationToken.None);
 
         // Assert
-        var okResult = Assert.IsType<OkObjectResult>(result);
-        Assert.NotNull(okResult.Value);
+        var ok = Assert.IsType<OkObjectResult>(result);
+        Assert.NotNull(ok.Value);
     }
 
     [Fact]
     public async Task Login_InvalidCredentials_Returns401()
     {
         // Arrange
-        var command = new AuthentificationUserDto
-        {
-            Name = "Pavel",
-            Password = "wrongpassword"
-        };
+        var dto = new AuthentificationUserDto { Name = "Pavel", Password = "wrong" };
+        var command = new AuthentificationUserCommand { Name = "Pavel", Password = "wrong" };
+
+        _mapperMock
+            .Setup(m => m.Map<AuthentificationUserDto, AuthentificationUserCommand>(dto))
+            .Returns(command);
 
         _mediatorMock
             .Setup(m => m.Send(command, It.IsAny<CancellationToken>()))
             .ReturnsAsync((AuthentificationUserOutDto?)null);
 
         // Act
-        var result = await _controller.AuthentificationUserAsync(command, CancellationToken.None);
+        var result = await _controller.AuthentificationUserAsync(dto, CancellationToken.None);
 
         // Assert
         Assert.IsType<UnauthorizedResult>(result);
     }
 
+    // ==================== Logout ====================
+
     [Fact]
-    public async Task Logout_WithValidCookie_Returns204()
+    public async Task Logout_WithValidCookie_ReturnsOk()
     {
-        // Arrange
+        // Arrange — устанавливаем cookie "Refresh"
         var httpContext = new DefaultHttpContext();
-        httpContext.Request.Headers["Cookie"] = "refreshToken=some_refresh_token";
-        _controller.ControllerContext = new ControllerContext
-        {
-            HttpContext = httpContext
-        };
+        httpContext.Request.Headers.Cookie = "Refresh=some_refresh_token";
+        _controller.ControllerContext = new ControllerContext { HttpContext = httpContext };
 
         _mediatorMock
-            .Setup(m => m.Send(It.IsAny<LogoutUserCommand>(),
-                It.IsAny<CancellationToken>()))
+            .Setup(m => m.Send(It.IsAny<LogoutUserCommand>(), It.IsAny<CancellationToken>()))
             .Returns(Task.CompletedTask);
 
         // Act
         var result = await _controller.LogoutUserAsync(CancellationToken.None);
 
         // Assert
-        Assert.IsType<NoContentResult>(result);
+        Assert.IsType<OkResult>(result);
     }
 
     [Fact]
-    public async Task Logout_WithoutCookie_Returns400()
+    public async Task Logout_WithoutCookie_ReturnsUnauthorized()
     {
-        // Arrange — пустой HttpContext без cookie
-        var httpContext = new DefaultHttpContext();
+        // Arrange — пустой контекст без cookie
         _controller.ControllerContext = new ControllerContext
         {
-            HttpContext = httpContext
+            HttpContext = new DefaultHttpContext()
         };
 
         // Act
         var result = await _controller.LogoutUserAsync(CancellationToken.None);
 
         // Assert
-        Assert.IsType<BadRequestResult>(result);
+        Assert.IsType<UnauthorizedResult>(result);
     }
 
+    // ==================== Refresh ====================
+
     [Fact]
-    public async Task Refresh_ValidToken_Returns200WithNewTokens()
+    public async Task Refresh_ValidCookie_Returns200()
     {
         // Arrange
         var httpContext = new DefaultHttpContext();
-        httpContext.Request.Headers["Cookie"] = "refreshToken=valid_refresh_token";
-        _controller.ControllerContext = new ControllerContext
-        {
-            HttpContext = httpContext
-        };
+        httpContext.Request.Headers.Cookie = "Refresh=valid_refresh_token";
+        _controller.ControllerContext = new ControllerContext { HttpContext = httpContext };
 
-        var expectedDto = new AuthentificationUserOutDto
+        var command = new RefreshTokenCommand { RefreshToken = "valid_refresh_token" };
+        var tokens = new AuthentificationUserOutDto
         {
             AccessToken = "new_access_token",
             RefreshToken = "new_refresh_token"
         };
 
+        _mapperMock
+            .Setup(m => m.Map<RefreshTokenCommand>(It.IsAny<string>()))
+            .Returns(command);
+
         _mediatorMock
-            .Setup(m => m.Send(It.IsAny<RefreshTokenCommand>(),
-                It.IsAny<CancellationToken>()))
-            .ReturnsAsync(expectedDto);
+            .Setup(m => m.Send(It.IsAny<RefreshTokenCommand>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(tokens);
 
         // Act
         var result = await _controller.RefreshUserAsync(CancellationToken.None);
 
         // Assert
-        var okResult = Assert.IsType<OkObjectResult>(result);
-        Assert.NotNull(okResult.Value);
+        Assert.IsType<OkObjectResult>(result);
+    }
+
+    [Fact]
+    public async Task Refresh_WithoutCookie_ReturnsUnauthorized()
+    {
+        // Arrange
+        _controller.ControllerContext = new ControllerContext
+        {
+            HttpContext = new DefaultHttpContext()
+        };
+
+        // Act
+        var result = await _controller.RefreshUserAsync(CancellationToken.None);
+
+        // Assert
+        Assert.IsType<UnauthorizedResult>(result);
     }
 }

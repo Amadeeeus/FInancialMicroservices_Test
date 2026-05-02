@@ -1,5 +1,8 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using FluentValidation;
+using MediatR;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using UserServiceApplication.Behaviors;
 
 namespace UserServiceApplication;
 
@@ -10,9 +13,16 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddApplication(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddMediatR(cfg => 
+        services.AddMediatR(cfg =>
+        {
             cfg.RegisterServicesFromAssembly(typeof(DependencyInjection)
-                .Assembly));
+                .Assembly);
+
+            cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+        });
+
+        
+        services.AddValidatorsFromAssembly(typeof(DependencyInjection).Assembly);
         
         services
             .AddAutoMapper(cfg => 
