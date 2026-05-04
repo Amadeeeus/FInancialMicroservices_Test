@@ -1,0 +1,8 @@
+﻿{
+  "profiles": {
+    "MigrationService.Api": {
+      "commandName": "Project",
+      "applicationUrl": "http://localhost:5010"
+    }
+  }
+}

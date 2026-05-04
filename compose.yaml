@@ -1,0 +1,86 @@
+﻿version: '3.8'
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+  migration:
+    build:
+      context: .
+      dockerfile: MigrationService.Api/Dockerfile
+    environment:
+      - ConnectionStrings__UserDb=Host=postgres;Port=5432;Database=userservice;Username=postgres;Password=postgres
+      - ConnectionStrings__TokensDb=Host=postgres;Port=5432;Database=userservice;Username=postgres;Password=postgres
+      - ConnectionStrings__CurrencyDb=Host=postgres;Port=5432;Database=financeservice;Username=postgres;Password=postgres
+    depends_on:
+      postgres:
+        condition: service_healthy
+  background:
+    build:
+      context: .
+      dockerfile: BackgroundRateService.Background/Dockerfile
+    environment:
+      - ConnectionStrings__CurrencyDb=Host=postgres;Port=5432;Database=financeservice;Username=postgres;Password=postgres
+    depends_on:
+      migration:
+        condition: service_completed_successfully
+  userservice:
+    build:
+      context: .
+      dockerfile: UserService.Api/Dockerfile
+    ports:
+      - "5001:8080"
+    environment:
+      - ConnectionStrings__UserDb=Host=postgres;Port=5432;Database=userservice;Username=postgres;Password=postgres
+      - ConnectionStrings__TokensDb=Host=postgres;Port=5432;Database=userservice;Username=postgres;Password=postgres
+      - JwtTokenOptions__Secret=VERY_LARGE_SECRET_HE_MUST_BE_HUGE
+      - JwtTokenOptions__Issuer=UserService
+      - JwtTokenOptions__Audience=ApiGateway
+      - JwtTokenOptions__AccessTokenLifetimeMinutes=15
+      - JwtTokenOptions__RefreshTokenLifetimeDays=7
+    depends_on:
+      migration:
+        condition: service_completed_successfully
+  financeservice:
+    build:
+      context: .
+      dockerfile: FinanceService.Api/Dockerfile
+    ports:
+      - "5002:8080"
+    environment:
+      - ConnectionStrings__CurrencyDb=Host=postgres;Port=5432;Database=financeservice;Username=postgres;Password=postgres
+      - JwtTokenOptions__Secret=VERY_LARGE_SECRET_HE_MUST_BE_HUGE
+      - JwtTokenOptions__Issuer=UserService
+      - JwtTokenOptions__Audience=ApiGateway
+      - Services__UserService=http://userservice:8080
+    depends_on:
+      migration:
+        condition: service_completed_successfully
+      userservice:
+        condition: service_started
+  gateway:
+    build:
+      context: .
+      dockerfile: ApiGateway/Dockerfile
+    ports:
+      - "5000:8080"
+    environment:
+      - JwtTokenOptions__Secret=VERY_LARGE_SECRET_HE_MUST_BE_HUGE
+      - JwtTokenOptions__Issuer=UserService
+      - JwtTokenOptions__Audience=ApiGateway
+    depends_on:
+      - userservice
+      - financeservice
+volumes:
+  postgres_data:

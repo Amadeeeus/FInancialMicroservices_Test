@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+        <RootNamespace>Background.CurrencyRate</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="AutoMapper" Version="16.1.1" />
+        <PackageReference Include="MediatR" Version="14.1.0" />
+        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.24"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.26" />
+        <PackageReference Include="Npgsql" Version="8.0.9" />
+        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.11" />
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\BackgroundRateService.Infrastructure\BackgroundRateService.Infrastructure.csproj" />
+        <ProjectReference Include="..\BackgroundRateService.Application\BackgroundRateService.Application.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Controllers\" />
+    </ItemGroup>
+
+</Project>

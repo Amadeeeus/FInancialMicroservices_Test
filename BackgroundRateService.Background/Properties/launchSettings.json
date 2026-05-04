@@ -1,0 +1,8 @@
+﻿{
+  "profiles": {
+    "BackgroundRateService": {
+      "commandName": "Project",
+      "applicationUrl": "http://localhost:5011"
+    }
+  }
+}
